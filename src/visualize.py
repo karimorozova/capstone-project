@@ -1,68 +1,26 @@
+import yaml
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
-import os
-from tabulate import tabulate
+import matplotlib.pyplot as plt
 
-CSV_PATH = "data/security_comparison.csv"
-OUTPUT_DIR = "data"
-OUTPUT_FILE = "security_comparison_heatmap.png"
-OUTPUT_PATH = os.path.join(OUTPUT_DIR, OUTPUT_FILE)
+with open("data/security_comparison.yaml", "r") as file:
+    data = yaml.safe_load(file)
 
-df = pd.read_csv(CSV_PATH)
+df = pd.DataFrame(data["messengers"])
 
-# Numeric mapping for heatmap
-mapping = {
-    "Low": 1,
-    "Medium": 2,
-    "High": 3,
-    "Yes": 3,
-    "No": 1,
-    "Partial": 2,
-    "Only Secret Chats": 2,
-    True: 3,
-    False: 1,
-    "True": 3,
-    "False": 1
-}
+binary_fields = ["e2ee_default", "e2ee_available", "audited"]
+binary_df = df[["name"] + binary_fields].copy()
 
-# Numeric criteria
-numeric_criteria = [
-    "End-to-end encryption (private chats)",
-    "End-to-end encryption (group chats)",
-    "Metadata protection level",
-    "Known vulnerabilities (historical)"
-]
+# Перетворення булевих значень у 0/1
+for col in binary_fields:
+    binary_df[col] = binary_df[col].astype(int)
 
-df_numeric = df[df["Criterion"].isin(numeric_criteria)].copy()
-messenger_cols = df_numeric.columns[1:]
-df_numeric[messenger_cols] = df_numeric[messenger_cols].replace(mapping)
+binary_df = binary_df.set_index("name")
 
-df_numeric[messenger_cols] = df_numeric[messenger_cols].apply(pd.to_numeric, errors='coerce')
-
-df_annot = df[df["Criterion"].isin(numeric_criteria)].set_index("Criterion")
-df_numeric.set_index("Criterion", inplace=True)
-
-print("Numeric matrix:\n", df_numeric)
-print(df_numeric.dtypes)
-
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-plt.figure(figsize=(12, 6))
-sns.heatmap(
-    df_numeric,
-    annot=df_annot,
-    fmt="",
-    cmap="Blues",
-    cbar_kws={"label": "Security Score"}
-)
-plt.title("Security Feature Comparison of Popular Messengers")
+# --- HEATMAP ---
+plt.figure(figsize=(6, 4))
+sns.heatmap(binary_df, annot=True, cmap="Greens", vmin=0, vmax=1)
+plt.title("Secure Features Comparison")
 plt.tight_layout()
-
-plt.savefig(OUTPUT_PATH, dpi=300)
-plt.show()
-plt.close()
-print("Heatmap saved to:", OUTPUT_PATH)
-
-print("\n--- Security Comparison Table ---\n")
-print(tabulate(df, headers="keys", tablefmt="fancy_grid"))
+plt.savefig("output/heatmap.png")
+print("Heatmap saved to output/heatmap.png")

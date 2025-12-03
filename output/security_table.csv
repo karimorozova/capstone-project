@@ -1,0 +1,4 @@
+name,encryption_type,e2ee_default,e2ee_available,protocol,ratchet,open_source,key_length,forward_secrecy,metadata_collection,server_architecture,audited
+Telegram,MTProto 2.0,False,True,MTProto (custom),Partial double ratchet,"Client open-source, server closed-source","2048-bit DH, AES-256",Only in Secret Chats,High,Centralized,False
+WhatsApp,E2EE (default),True,True,Signal Protocol,Double Ratchet,Protocol open-source,"Curve25519, AES-256",Yes,High,Meta centralized,True
+Signal,E2EE only,True,True,Signal Protocol,Full Double Ratchet,Fully open-source,"Curve25519, AES-256",Yes,Minimal,Centralized (minimal metadata),True

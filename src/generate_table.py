@@ -1,22 +1,16 @@
-import pandas as pd
 import yaml
-import os
+import pandas as pd
 from tabulate import tabulate
 
-CONFIG_PATH = "config/security_data.yaml"
+with open("data/security_comparison.yaml", "r") as file:
+    data = yaml.safe_load(file)
 
-with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-    data = yaml.safe_load(f)
+df = pd.DataFrame(data["messengers"])
 
-df = pd.DataFrame(data)
+# Зберігаємо таблицю у CSV для звіту
+df.to_csv("output/security_table.csv", index=False)
 
-output_dir = "data"
-os.makedirs(output_dir, exist_ok=True)
-
-output_path = os.path.join(output_dir, "security_comparison.csv")
-df.to_csv(output_path, index=False, encoding="utf-8")
-
-print("Table generated successfully:", output_path)
-
-print("\n--- Security Comparison Table ---\n")
-print(tabulate(df, headers="keys", tablefmt="fancy_grid"))
+# --- КРАСИВИЙ ASCII ПРИНТ У КОНСОЛЬ ---
+print("\n================ Messengers Security Table ================\n")
+print(tabulate(df, headers="keys", tablefmt="grid", showindex=False))
+print("\n============================================================\n")

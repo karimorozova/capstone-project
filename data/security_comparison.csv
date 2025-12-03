@@ -1,7 +1,0 @@
-Criterion,Telegram,WhatsApp,Viber
-End-to-end encryption (private chats),Only Secret Chats,True,True
-End-to-end encryption (group chats),False,True,Partial
-Default encryption protocol,MTProto 2.0,Signal Protocol,Custom end-to-end protocol (Open Whisper base)
-Storage of encryption keys,Cloud (server-side encrypted),On-device,On-device
-Metadata protection level,Low,Medium,Low
-Known vulnerabilities (historical),Medium,Medium,Medium
